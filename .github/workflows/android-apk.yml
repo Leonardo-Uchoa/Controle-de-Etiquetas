@@ -1,0 +1,42 @@
+
+name: Gerar APK Android
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar codigo
+        uses: actions/checkout@v4
+
+      - name: Instalar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Instalar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Criar estrutura Android
+        run: flutter create --platforms=android .
+
+      - name: Instalar dependencias
+        run: flutter pub get
+
+      - name: Gerar APK
+        run: flutter build apk --release
+
+      - name: Disponibilizar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Controle-de-Etiquetas-APK
+          path: build/app/outputs/flutter-apk/app-release.apk
+
